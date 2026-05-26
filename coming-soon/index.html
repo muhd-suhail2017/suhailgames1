@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coming Soon — Suhail by the River Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0d; --surface: #161616; --border: #222;
+      --text: #e8e8e8; --muted: #888; --accent: #c9a96e;
+      --accent-dim: rgba(201,169,110,0.1);
+    }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-weight: 300; line-height: 1.7; min-height: 100vh; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .nav-brand { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 300; color: var(--text); text-decoration: none; }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 4px; transition: color 0.2s, background 0.2s; }
+    .nav-back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    main { max-width: 800px; margin: 0 auto; padding: 5rem 2rem 6rem; }
+    .hero { text-align: center; margin-bottom: 4rem; }
+    .hero-icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    h1 { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 300; color: var(--text); line-height: 1.1; }
+    .hero p { margin-top: 0.75rem; color: var(--muted); font-size: 0.95rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+    /* Pipeline */
+    .section-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 1.25rem; }
+    .pipeline { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 4rem; }
+    .pipeline-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .pipeline-item .p-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .pipeline-item h3 { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 300; color: var(--text); }
+    .pipeline-item p { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+    .status-badge { margin-left: auto; flex-shrink: 0; font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .status-badge.idea { background: rgba(139,92,246,0.12); color: #8B5CF6; }
+    .status-badge.wip  { background: rgba(201,169,110,0.12); color: var(--accent); }
+    /* How to add */
+    .how-to { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+    .how-to h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 300; margin-bottom: 1.5rem; color: var(--text); }
+    .step { display: flex; gap: 1.25rem; margin-bottom: 1.5rem; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(201,169,110,0.3); color: var(--accent); font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.15rem; }
+    .step-body h4 { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 0.25rem; }
+    .step-body p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    code { background: rgba(255,255,255,0.07); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.8rem; font-family: 'Menlo', 'Consolas', monospace; color: var(--accent); }
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 0.78rem; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+    @media (max-width: 600px) { main { padding: 3rem 1.25rem 4rem; } nav { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="https://suhailbytheriver.com" class="nav-brand">Suhail by the River</a>
+    <a href="../" class="nav-back">← All games</a>
+  </nav>
+
+  <main>
+
+    <div class="hero">
+      <div class="hero-icon">🚧</div>
+      <h1>More games on the way</h1>
+      <p>Check back soon — the pipeline has a few ideas brewing.</p>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="section-label">Pipeline</div>
+    <div class="pipeline">
+
+      <div class="pipeline-item">
+        <span class="p-icon">💻</span>
+        <div>
+          <h3>Command-Line CTF</h3>
+          <p>Simulated terminal challenges — find flags using Linux, bash, and common security tools.</p>
+        </div>
+        <span class="status-badge idea">Idea</span>
+      </div>
+
+      <div class="pipeline-item">
+        <span class="p-icon">🌐</span>
+        <div>
+          <h3>Network Topology Builder</h3>
+          <p>Drag-and-drop network design game — build secure architectures against a threat scenario.</p>
+        </div>
+        <span class="status-badge idea">Idea</span>
+      </div>
+
+      <div class="pipeline-item">
+        <span class="p-icon">🃏</span>
+        <div>
+          <h3>Flashcard Drills</h3>
+          <p>Rapid-fire flashcards for certifications — CompTIA Security+, CISSP, SC-300, and more.</p>
+        </div>
+        <span class="status-badge wip">Maybe next</span>
+      </div>
+
+      <div class="pipeline-item">
+        <span class="p-icon">🔍</span>
+        <div>
+          <h3>Log Analysis Challenge</h3>
+          <p>Spot the attack in a stream of simulated log lines — SIEM analyst training.</p>
+        </div>
+        <span class="status-badge idea">Idea</span>
+      </div>
+
+    </div>
+
+    <!-- How to add a game -->
+    <div class="how-to">
+      <h2>How to add a new game</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Create a folder under <code>games/</code></h4>
+          <p>Name it the URL slug you want — e.g. <code>games/ctf/</code> becomes <code>games.suhailbytheriver.com/ctf</code>. Add an <code>index.html</code> inside.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Match the shared design system</h4>
+          <p>Copy the <code>:root</code> CSS variables and the <code>&lt;nav&gt;</code> block from any existing game. Use Inter (body) and Fraunces (headings) with <code>font-weight: 300</code>. Add a back link to <code>../</code> in the nav.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Pick an accent colour for your game</h4>
+          <p>Each game has its own <code>--accent</code>: Jigsaw uses gold <code>#c9a96e</code>, Cybersecurity uses green <code>#00c896</code>, IAM uses blue <code>#0078D4</code>. Pick something distinct.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>If it's an MCQ game, use the shared quiz engine</h4>
+          <p>Copy <code>cybersecurity/index.html</code> as a starting point. Change <code>--accent</code>, the category list in <code>CAT_LABELS</code>, and the title. Provide a <code>questions.json</code> in the same folder following the format <code>&#123;"id":N,"cat":"…","diff":"easy|medium|hard","q":"…","o":["A","B","C","D"],"a":0,"exp":"…"&#125;</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Register the game in <code>games/index.html</code></h4>
+          <p>Add a <code>&lt;a href="gameslug/" class="game-card"&gt;</code> block with your accent colour as <code>--card-accent</code>. Copy the card structure from an existing entry.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h4>Push to GitHub — Cloudflare Pages deploys automatically</h4>
+          <p>Run <code>git add games/ &amp;&amp; git commit -m "add [game name]" &amp;&amp; git push</code>. Cloudflare Pages picks up the push and deploys in ~1 minute. No build step needed — everything is static HTML.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h4>Remove this game from the Coming Soon card</h4>
+          <p>Once your game is live, update the "More Games" card in <code>games/index.html</code> and remove its listing from the pipeline above if it was listed there.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    © 2026 Muhammed Suhail &nbsp;·&nbsp;
+    <a href="https://suhailbytheriver.com">suhailbytheriver.com</a>
+    &nbsp;·&nbsp; games.suhailbytheriver.com
+  </footer>
+
+</body>
+</html>
