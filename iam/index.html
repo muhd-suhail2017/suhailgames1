@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IAM Challenge — Suhail Games</title>
+  <meta name="theme-color" content="#0d0d0d" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0d; --surface: #161616; --border: #222;
+      --text: #e8e8e8; --muted: #888;
+      --accent: #0078D4; --accent-dim: rgba(0,120,212,0.1);
+      --wrong: #ef4444; --wrong-dim: rgba(239,68,68,0.1);
+    }
+    html { font-size: 16px; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-weight: 300; line-height: 1.7; min-height: 100vh; display: flex; flex-direction: column; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,13,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-brand { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 300; color: var(--text); text-decoration: none; }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.85rem; padding: 0.35rem 0.75rem; border-radius: 4px; transition: color 0.2s, background 0.2s; }
+    .nav-back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    main { flex: 1; }
+
+    .screen { display: none; max-width: 700px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+    .screen.active { display: block; }
+
+    .home-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .home-title { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 300; color: var(--text); margin-bottom: 0.5rem; }
+    .home-sub { color: var(--muted); font-size: 0.92rem; margin-bottom: 2.5rem; }
+
+    .stats-row { display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; flex: 1; min-width: 110px; }
+    .stat-box .stat-n { font-size: 1.8rem; font-weight: 600; color: var(--accent); }
+    .stat-box .stat-l { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+    .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.6rem; margin-bottom: 2rem; }
+    .cat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.8rem; color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center; }
+    .cat-chip:hover, .cat-chip.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .cat-chip.active { font-weight: 500; }
+
+    .q-count-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .q-count-row label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); }
+    .q-count-row select { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 0.4rem 0.8rem; font-size: 0.85rem; font-family: inherit; cursor: pointer; }
+
+    .quiz-hud { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .hud-left { display: flex; gap: 1.5rem; }
+    .hud-item { display: flex; flex-direction: column; }
+    .hud-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+    .hud-value { font-size: 1.1rem; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .hud-value.warn { color: #f59e0b; }
+    .hud-value.danger { color: var(--wrong); }
+
+    .timer-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 2rem; }
+    .timer-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s linear, background 0.5s; }
+
+    .progress-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+    .question-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem; }
+    .q-cat { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.75rem; }
+    .q-text { font-size: 1rem; font-weight: 400; color: var(--text); line-height: 1.6; }
+    .q-diff { display: inline-block; font-size: 0.68rem; margin-top: 0.5rem; padding: 0.15rem 0.5rem; border-radius: 20px; background: rgba(255,255,255,0.06); color: var(--muted); text-transform: capitalize; letter-spacing: 0.04em; }
+
+    .options-list { display: flex; flex-direction: column; gap: 0.65rem; }
+    .option-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1.1rem; text-align: left; font-size: 0.9rem; font-weight: 400; color: var(--text); cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 0.75rem; }
+    .option-btn .opt-letter { font-size: 0.75rem; font-weight: 600; color: var(--muted); min-width: 16px; }
+    .option-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); }
+    .option-btn.correct { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+    .option-btn.correct .opt-letter { color: var(--accent); }
+    .option-btn.wrong { border-color: var(--wrong); background: var(--wrong-dim); color: var(--wrong); }
+    .option-btn.wrong .opt-letter { color: var(--wrong); }
+    .option-btn:disabled { cursor: default; }
+
+    .explanation { margin-top: 1rem; padding: 0.9rem 1.1rem; background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; font-size: 0.85rem; color: #aaa; line-height: 1.6; display: none; }
+
+    .next-btn { margin-top: 1.5rem; padding: 0.75rem 2rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.2s; display: none; }
+    .next-btn:hover { opacity: 0.85; }
+
+    .result-hero { text-align: center; padding: 1.5rem 0 2.5rem; }
+    .result-score { font-size: 5rem; font-weight: 700; color: var(--accent); line-height: 1; }
+    .result-label { font-size: 1rem; color: var(--muted); margin-top: 0.5rem; }
+    .result-subtitle { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 300; color: var(--text); margin-top: 0.75rem; }
+
+    .result-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .r-btn { padding: 0.7rem 1.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+    .r-btn.primary { background: var(--accent); color: #fff; border: none; }
+    .r-btn.primary:hover { opacity: 0.85; }
+    .r-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .r-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .review-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1rem; }
+    .review-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; }
+    .review-item.wrong { border-left: 3px solid var(--wrong); }
+    .review-q { font-size: 0.88rem; color: var(--text); margin-bottom: 0.5rem; }
+    .review-your { font-size: 0.8rem; color: var(--wrong); }
+    .review-correct { font-size: 0.8rem; color: var(--accent); }
+    .review-exp { font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
+
+    .btn-primary { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.8rem 2.5rem; font-size: 0.9rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.2s; margin-top: 1.5rem; }
+    .btn-primary:hover { opacity: 0.85; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.25rem 2rem; text-align: center; font-size: 0.78rem; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) { .screen { padding: 2rem 1rem 3rem; } nav { padding: 0 1rem; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="nav-brand">🎮 Games</a>
+  <a href="../" class="nav-back">← Back to Games</a>
+</nav>
+
+<main>
+
+  <!-- HOME -->
+  <div class="screen active" id="home-screen">
+    <div class="home-icon">🔐</div>
+    <h1 class="home-title">IAM Challenge</h1>
+    <p class="home-sub">Deep-dive questions on Identity & Access Management — Active Directory, Okta, SAML, OAuth 2.0, SCIM, MFA, Entra ID, PAM, RBAC, and SSO. 1000 questions, 20 per round.</p>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n">1000</div><div class="stat-l">Questions</div></div>
+      <div class="stat-box"><div class="stat-n">10</div><div class="stat-l">IAM Topics</div></div>
+      <div class="stat-box"><div class="stat-n">30s</div><div class="stat-l">Per Question</div></div>
+    </div>
+
+    <label style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);display:block;margin-bottom:0.75rem;">Filter by topic (optional)</label>
+    <div class="category-grid" id="cat-grid"></div>
+
+    <div class="q-count-row">
+      <label>Questions per round</label>
+      <select id="q-count">
+        <option value="10">10</option>
+        <option value="20" selected>20</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+
+    <button class="btn-primary" onclick="startQuiz()">Start Challenge →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="quiz-screen">
+    <div class="quiz-hud">
+      <div class="hud-left">
+        <div class="hud-item"><span class="hud-label">Score</span><span class="hud-value" id="score-display">0</span></div>
+        <div class="hud-item"><span class="hud-label">Streak</span><span class="hud-value" id="streak-display">0🔥</span></div>
+      </div>
+      <div class="hud-item"><span class="hud-label">Time</span><span class="hud-value" id="timer-display">30</span></div>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    <p class="progress-label" id="progress-label">Question 1 of 20</p>
+    <div class="question-card">
+      <div class="q-cat" id="q-cat"></div>
+      <div class="q-text" id="q-text"></div>
+      <span class="q-diff" id="q-diff"></span>
+    </div>
+    <div class="options-list" id="options-list"></div>
+    <div class="explanation" id="explanation"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="results-screen">
+    <div class="result-hero">
+      <div class="result-score" id="result-score">0/20</div>
+      <div class="result-label">Correct answers</div>
+      <div class="result-subtitle" id="result-subtitle">Well done!</div>
+    </div>
+    <div class="result-actions">
+      <button class="r-btn primary" onclick="startQuiz()">Play Again</button>
+      <button class="r-btn secondary" onclick="showScreen('home-screen')">Change Settings</button>
+      <button class="r-btn secondary" onclick="location.href='../'">← Games</button>
+    </div>
+    <div class="review-title">Review — Wrong Answers</div>
+    <div id="review-list"></div>
+  </div>
+
+</main>
+
+<footer>
+  <a href="https://suhailbytheriver.com">suhailbytheriver.com</a>
+  &nbsp;·&nbsp; games.suhailbytheriver.com/iam
+</footer>
+
+<script>
+const QUESTIONS_URL = 'questions.json';
+const TIMER_SECONDS = 30;
+
+let allQuestions = [];
+let sessionQuestions = [];
+let currentIdx = 0;
+let score = 0;
+let streak = 0;
+let timerVal = TIMER_SECONDS;
+let timerInterval = null;
+let answered = false;
+let wrongAnswers = [];
+let selectedCats = new Set();
+let qCount = 20;
+
+const CATEGORIES = [
+  "active-directory","okta","saml","oauth","scim",
+  "mfa","entra","pam","rbac","sso"
+];
+
+const CAT_LABELS = {
+  "active-directory": "Active Directory",
+  "okta": "Okta",
+  "saml": "SAML",
+  "oauth": "OAuth 2.0 / OIDC",
+  "scim": "SCIM",
+  "mfa": "MFA & Passwordless",
+  "entra": "Microsoft Entra ID",
+  "pam": "PAM",
+  "rbac": "RBAC & Permissions",
+  "sso": "SSO & Federation"
+};
+
+const catGrid = document.getElementById('cat-grid');
+CATEGORIES.forEach(cat => {
+  const chip = document.createElement('div');
+  chip.className = 'cat-chip';
+  chip.textContent = CAT_LABELS[cat];
+  chip.dataset.cat = cat;
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('active');
+    if (selectedCats.has(cat)) selectedCats.delete(cat);
+    else selectedCats.add(cat);
+  });
+  catGrid.appendChild(chip);
+});
+
+document.getElementById('q-count').addEventListener('change', e => { qCount = parseInt(e.target.value); });
+
+fetch(QUESTIONS_URL).then(r => r.json()).then(data => { allQuestions = data; }).catch(() => console.error('Could not load questions.json'));
+
+function shuffle(arr) { for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; }
+
+function startQuiz() {
+  qCount = parseInt(document.getElementById('q-count').value);
+  let pool = allQuestions;
+  if (selectedCats.size > 0) pool = pool.filter(q => selectedCats.has(q.cat));
+  sessionQuestions = shuffle([...pool]).slice(0, qCount);
+  currentIdx = 0; score = 0; streak = 0; wrongAnswers = [];
+  showScreen('quiz-screen');
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  stopTimer();
+  const q = sessionQuestions[currentIdx];
+  document.getElementById('progress-label').textContent = `Question ${currentIdx+1} of ${sessionQuestions.length}`;
+  document.getElementById('q-cat').textContent = CAT_LABELS[q.cat] || q.cat;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-diff').textContent = q.diff;
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.addEventListener('click', () => selectAnswer(i));
+    list.appendChild(btn);
+  });
+  document.getElementById('explanation').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('streak-display').textContent = streak > 0 ? `${streak}🔥` : '0';
+  startTimer();
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true; stopTimer();
+  const q = sessionQuestions[currentIdx];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  if (idx === q.a) { btns[idx].classList.add('correct'); score++; streak++; }
+  else { btns[idx].classList.add('wrong'); btns[q.a].classList.add('correct'); streak = 0; wrongAnswers.push({q, chosen: idx}); }
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('streak-display').textContent = streak > 0 ? `${streak}🔥` : '0';
+  if (q.exp) { const exp = document.getElementById('explanation'); exp.textContent = q.exp; exp.style.display = 'block'; }
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() { currentIdx++; if (currentIdx >= sessionQuestions.length) showResults(); else showQuestion(); }
+
+function showResults() {
+  stopTimer(); showScreen('results-screen');
+  const total = sessionQuestions.length;
+  document.getElementById('result-score').textContent = `${score}/${total}`;
+  const pct = Math.round(score/total*100);
+  let sub = pct>=90?'🏆 IAM Master!':pct>=70?'💪 Solid IAM knowledge.':pct>=50?'📚 Keep practicing.':'🔁 Try again!';
+  document.getElementById('result-subtitle').textContent = sub;
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  if (wrongAnswers.length === 0) { list.innerHTML = '<p style="color:var(--muted);font-size:0.88rem;">Perfect score!</p>'; return; }
+  wrongAnswers.forEach(({q, chosen}) => {
+    const div = document.createElement('div');
+    div.className = 'review-item wrong';
+    const letters = ['A','B','C','D'];
+    div.innerHTML = `<div class="review-q">${q.q}</div><div class="review-your">✗ You chose: ${chosen>=0?letters[chosen]+'. '+q.o[chosen]:'(timed out)'}</div><div class="review-correct">✓ Correct: ${letters[q.a]}. ${q.o[q.a]}</div>${q.exp?`<div class="review-exp">${q.exp}</div>`:''}`;
+    list.appendChild(div);
+  });
+}
+
+function startTimer() {
+  timerVal = TIMER_SECONDS; updateTimerUI();
+  timerInterval = setInterval(() => { timerVal--; updateTimerUI(); if (timerVal <= 0) { stopTimer(); if (!answered) timeOut(); }}, 1000);
+}
+
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+
+function updateTimerUI() {
+  const el = document.getElementById('timer-display');
+  el.textContent = timerVal;
+  el.className = 'hud-value' + (timerVal<=5?' danger':timerVal<=10?' warn':'');
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = (timerVal/TIMER_SECONDS*100)+'%';
+  bar.style.background = timerVal<=5?'var(--wrong)':timerVal<=10?'#f59e0b':'var(--accent)';
+}
+
+function timeOut() {
+  answered = true;
+  const q = sessionQuestions[currentIdx];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.a].classList.add('correct');
+  streak = 0; wrongAnswers.push({q, chosen: -1});
+  document.getElementById('streak-display').textContent = '0';
+  if (q.exp) { const exp = document.getElementById('explanation'); exp.textContent = '⏱ Time\'s up! '+q.exp; exp.style.display = 'block'; }
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+document.addEventListener('keydown', e => {
+  const screen = document.querySelector('.screen.active');
+  if (screen.id !== 'quiz-screen') return;
+  if (!answered && ['1','2','3','4'].includes(e.key)) selectAnswer(parseInt(e.key)-1);
+  else if (answered && (e.key==='Enter'||e.key===' ')) { e.preventDefault(); nextQuestion(); }
+});
+</script>
+
+</body>
+</html>
