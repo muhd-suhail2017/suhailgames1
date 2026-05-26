@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jigsaw — Suhail Games</title>
+  <meta name="theme-color" content="#0d0d0d" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #222;
+      --text: #e8e8e8;
+      --muted: #888;
+      --accent: #c9a96e;
+      --accent-dim: rgba(201, 169, 110, 0.12);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-brand {
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem; font-weight: 300;
+      color: var(--text); text-decoration: none;
+    }
+
+    .nav-back {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.85rem; font-weight: 400;
+      letter-spacing: 0.04em;
+      padding: 0.35rem 0.75rem; border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+    main { flex: 1; }
+
+    /* SETUP SCREEN */
+    #setup-screen {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 4rem;
+    }
+
+    #setup-screen h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem; font-weight: 300;
+      color: var(--text); margin-bottom: 0.5rem;
+    }
+
+    #setup-screen > p {
+      color: var(--muted); font-size: 0.9rem; margin-bottom: 2.5rem;
+    }
+
+    .setup-section { margin-bottom: 2rem; }
+
+    .setup-section label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* Image picker */
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .img-option {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative;
+    }
+
+    .img-option img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    .img-option.selected {
+      border-color: var(--accent);
+      transform: scale(0.97);
+    }
+
+    .img-option .img-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.65);
+      font-size: 0.68rem; color: #fff;
+      padding: 0.25rem 0.4rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .img-option:hover .img-label, .img-option.selected .img-label { opacity: 1; }
+
+    /* Difficulty */
+    .diff-row {
+      display: flex; gap: 0.6rem; flex-wrap: wrap;
+    }
+
+    .diff-btn {
+      padding: 0.45rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .diff-btn:hover { border-color: var(--accent); color: var(--text); }
+    .diff-btn.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+    .start-btn {
+      margin-top: 2rem;
+      padding: 0.8rem 2.5rem;
+      background: var(--accent);
+      color: #0d0d0d;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .start-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .start-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* GAME SCREEN */
+    #game-screen { display: none; }
+
+    .game-header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .game-header h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem; font-weight: 300;
+      color: var(--text);
+    }
+
+    .hud {
+      display: flex; gap: 1.5rem; align-items: center;
+    }
+
+    .hud-item {
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .hud-label {
+      font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+
+    .hud-value {
+      font-size: 1.15rem; font-weight: 500;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .reset-btn {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .canvas-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 1.5rem;
+    }
+
+    #preview-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview-box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .preview-box img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    canvas#puzzle-canvas {
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #111;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    canvas#puzzle-canvas:active { cursor: grabbing; }
+
+    /* WIN SCREEN */
+    #win-screen {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    #win-screen .win-emoji { font-size: 4rem; }
+
+    #win-screen h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem; font-weight: 300;
+      color: var(--text);
+    }
+
+    #win-screen p { color: var(--muted); font-size: 1rem; }
+
+    #win-screen .win-time {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .win-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    }
+
+    .win-btn {
+      padding: 0.7rem 1.8rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .win-btn.primary {
+      background: var(--accent); color: #0d0d0d; border: none;
+    }
+
+    .win-btn.primary:hover { opacity: 0.85; }
+
+    .win-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .win-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      #setup-screen, .canvas-wrapper, #preview-wrap, .game-header {
+        padding-left: 1rem; padding-right: 1rem;
+      }
+      .image-grid { grid-template-columns: repeat(3, 1fr); }
+      nav { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="nav-brand">🎮 Games</a>
+  <a href="../" class="nav-back">← Back to Games</a>
+</nav>
+
+<main>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <h1>🧩 Jigsaw Puzzle</h1>
+  <p>Pick an image, choose your grid size, and beat the clock.</p>
+
+  <div class="setup-section">
+    <label>Choose an image</label>
+    <div class="image-grid" id="image-grid"></div>
+  </div>
+
+  <div class="setup-section">
+    <label>Difficulty (grid size)</label>
+    <div class="diff-row" id="diff-row">
+      <button class="diff-btn" data-grid="3">3×3 &nbsp;Easy</button>
+      <button class="diff-btn selected" data-grid="4">4×4 &nbsp;Normal</button>
+      <button class="diff-btn" data-grid="5">5×5 &nbsp;Medium</button>
+      <button class="diff-btn" data-grid="6">6×6 &nbsp;Hard</button>
+      <button class="diff-btn" data-grid="7">7×7 &nbsp;Expert</button>
+      <button class="diff-btn" data-grid="8">8×8 &nbsp;Master</button>
+    </div>
+  </div>
+
+  <button class="start-btn" id="start-btn" disabled>Start Puzzle →</button>
+</div>
+
+<!-- GAME -->
+<div id="game-screen">
+  <div class="game-header">
+    <h2>🧩 Jigsaw</h2>
+    <div class="hud">
+      <div class="hud-item">
+        <span class="hud-label">Time</span>
+        <span class="hud-value" id="timer-display">0:00</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Pieces</span>
+        <span class="hud-value" id="pieces-display">0 / 0</span>
+      </div>
+      <button class="reset-btn" id="reset-btn">↩ Restart</button>
+    </div>
+  </div>
+
+  <div id="preview-wrap">
+    <div class="preview-box">
+      <img id="preview-img" src="" alt="Reference" />
+    </div>
+    <p class="preview-hint">Use the reference image on the left.<br>Drag pieces to their correct position.<br>A piece <em>snaps</em> when it's placed correctly.</p>
+  </div>
+
+  <div class="canvas-wrapper">
+    <canvas id="puzzle-canvas"></canvas>
+  </div>
+</div>
+
+</main>
+
+<!-- WIN SCREEN -->
+<div id="win-screen">
+  <div class="win-emoji">🎉</div>
+  <h2>Puzzle Complete!</h2>
+  <p>Solved in</p>
+  <div class="win-time" id="win-time-display">0:00</div>
+  <div class="win-actions">
+    <button class="win-btn primary" onclick="playAgain()">Play Again</button>
+    <button class="win-btn secondary" onclick="goToSetup()">Change Puzzle</button>
+    <button class="win-btn secondary" onclick="location.href='../'">← Games</button>
+  </div>
+</div>
+
+<footer>
+  <a href="https://suhailbytheriver.com">suhailbytheriver.com</a>
+  &nbsp;·&nbsp; games.suhailbytheriver.com/jigsaw
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIGURATION — edit this array to use your own images
+//  Place images in jigsaw/images/ and list them here.
+//  You can use URLs or relative paths like "images/photo-1.jpg"
+// ═══════════════════════════════════════════════════════
+const IMAGES = [
+  { src: "https://picsum.photos/seed/kerala1/600/600",   label: "Photo 1" },
+  { src: "https://picsum.photos/seed/kerala2/600/600",   label: "Photo 2" },
+  { src: "https://picsum.photos/seed/kerala3/600/600",   label: "Photo 3" },
+  { src: "https://picsum.photos/seed/kerala4/600/600",   label: "Photo 4" },
+  { src: "https://picsum.photos/seed/kerala5/600/600",   label: "Photo 5" },
+  { src: "https://picsum.photos/seed/kerala6/600/600",   label: "Photo 6" },
+  { src: "https://picsum.photos/seed/kerala7/600/600",   label: "Photo 7" },
+  { src: "https://picsum.photos/seed/kerala8/600/600",   label: "Photo 8" },
+  // To add your own images:
+  // { src: "images/photo-1.jpg", label: "My Photo 1" },
+];
+// ═══════════════════════════════════════════════════════
+
+// — State —
+let selectedImage = null;
+let gridSize = 4;
+let pieces = [];
+let dragging = null;
+let dragOffsetX = 0, dragOffsetY = 0;
+let timerInterval = null;
+let elapsedSeconds = 0;
+let placedCount = 0;
+let totalPieces = 0;
+let loadedImage = null;
+let canvasSize = 560;
+
+const canvas = document.getElementById('puzzle-canvas');
+const ctx = canvas.getContext('2d');
+
+// — Build image picker —
+const imageGrid = document.getElementById('image-grid');
+IMAGES.forEach((img, idx) => {
+  const div = document.createElement('div');
+  div.className = 'img-option';
+  div.dataset.idx = idx;
+
+  const im = document.createElement('img');
+  im.src = img.src;
+  im.alt = img.label;
+  im.crossOrigin = 'anonymous';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'img-label';
+  lbl.textContent = img.label;
+
+  div.appendChild(im);
+  div.appendChild(lbl);
+  div.addEventListener('click', () => selectImage(idx));
+  imageGrid.appendChild(div);
+});
+
+function selectImage(idx) {
+  document.querySelectorAll('.img-option').forEach(d => d.classList.remove('selected'));
+  document.querySelectorAll('.img-option')[idx].classList.add('selected');
+  selectedImage = idx;
+  document.getElementById('start-btn').disabled = false;
+}
+
+// — Difficulty buttons —
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    gridSize = parseInt(btn.dataset.grid);
+  });
+});
+
+// — Start button —
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  stopTimer();
+  initPuzzle();
+});
+
+function startGame() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('preview-img').src = IMAGES[selectedImage].src;
+
+  // Responsive canvas size
+  canvasSize = Math.min(760, window.innerWidth - 40);
+  canvas.width = canvasSize;
+  canvas.height = canvasSize;
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    loadedImage = img;
+    initPuzzle();
+  };
+  img.src = IMAGES[selectedImage].src;
+}
+
+function initPuzzle() {
+  const N = gridSize;
+  const pieceW = canvasSize / N;
+  const pieceH = canvasSize / N;
+
+  totalPieces = N * N;
+  placedCount = 0;
+  pieces = [];
+  elapsedSeconds = 0;
+  updateTimerDisplay();
+  updatePiecesDisplay();
+
+  // Build pieces
+  for (let row = 0; row < N; row++) {
+    for (let col = 0; col < N; col++) {
+      pieces.push({
+        id: row * N + col,
+        row, col,
+        // current position (scrambled)
+        x: 0, y: 0,
+        // target position
+        targetX: col * pieceW,
+        targetY: row * pieceH,
+        w: pieceW,
+        h: pieceH,
+        placed: false,
+      });
+    }
+  }
+
+  // Scramble: random positions within canvas, with padding
+  const margin = pieceW * 0.1;
+  pieces.forEach(p => {
+    p.x = margin + Math.random() * (canvasSize - pieceW - margin * 2);
+    p.y = margin + Math.random() * (canvasSize - pieceH - margin * 2);
+  });
+
+  stopTimer();
+  startTimer();
+  drawAll();
+}
+
+function drawAll() {
+  ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+  // Grid ghost
+  const N = gridSize;
+  const pw = canvasSize / N;
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= N; i++) {
+    ctx.beginPath(); ctx.moveTo(i * pw, 0); ctx.lineTo(i * pw, canvasSize); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i * pw); ctx.lineTo(canvasSize, i * pw); ctx.stroke();
+  }
+
+  if (!loadedImage) return;
+
+  // Draw non-dragging pieces first
+  pieces.forEach(p => {
+    if (p === dragging) return;
+    drawPiece(p);
+  });
+
+  // Dragging piece on top
+  if (dragging) drawPiece(dragging);
+}
+
+function drawPiece(p) {
+  const imgW = loadedImage.naturalWidth || 600;
+  const imgH = loadedImage.naturalHeight || 600;
+  const N = gridSize;
+  const sliceW = imgW / N;
+  const sliceH = imgH / N;
+
+  ctx.save();
+
+  // Clip to piece rectangle
+  ctx.beginPath();
+  ctx.rect(p.x, p.y, p.w, p.h);
+  ctx.clip();
+
+  ctx.drawImage(
+    loadedImage,
+    p.col * sliceW, p.row * sliceH, sliceW, sliceH,
+    p.x, p.y, p.w, p.h
+  );
+
+  // Border
+  if (p.placed) {
+    ctx.strokeStyle = 'rgba(201,169,110,0.5)';
+    ctx.lineWidth = 2;
+  } else if (p === dragging) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    ctx.lineWidth = 2;
+    // shadow effect
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 12;
+  } else {
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+  }
+  ctx.strokeRect(p.x + 0.5, p.y + 0.5, p.w - 1, p.h - 1);
+
+  ctx.restore();
+}
+
+// — Pointer events —
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvasSize / rect.width;
+  const scaleY = canvasSize / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY,
+  };
+}
+
+canvas.addEventListener('mousedown', onDown);
+canvas.addEventListener('touchstart', onDown, { passive: false });
+
+function onDown(e) {
+  e.preventDefault();
+  const pos = getPos(e);
+  // Find topmost unplaced piece
+  for (let i = pieces.length - 1; i >= 0; i--) {
+    const p = pieces[i];
+    if (p.placed) continue;
+    if (pos.x >= p.x && pos.x <= p.x + p.w && pos.y >= p.y && pos.y <= p.y + p.h) {
+      dragging = p;
+      dragOffsetX = pos.x - p.x;
+      dragOffsetY = pos.y - p.y;
+      // Bring to front
+      pieces.splice(i, 1);
+      pieces.push(p);
+      break;
+    }
+  }
+  drawAll();
+}
+
+window.addEventListener('mousemove', onMove);
+window.addEventListener('touchmove', onMove, { passive: false });
+
+function onMove(e) {
+  if (!dragging) return;
+  e.preventDefault();
+  const pos = getPos(e);
+  dragging.x = pos.x - dragOffsetX;
+  dragging.y = pos.y - dragOffsetY;
+  drawAll();
+}
+
+window.addEventListener('mouseup', onUp);
+window.addEventListener('touchend', onUp);
+
+function onUp() {
+  if (!dragging) return;
+  const snapThreshold = dragging.w * 0.35;
+  const dx = Math.abs(dragging.x - dragging.targetX);
+  const dy = Math.abs(dragging.y - dragging.targetY);
+
+  if (dx < snapThreshold && dy < snapThreshold) {
+    dragging.x = dragging.targetX;
+    dragging.y = dragging.targetY;
+    dragging.placed = true;
+    placedCount++;
+    updatePiecesDisplay();
+
+    if (placedCount === totalPieces) {
+      setTimeout(onWin, 300);
+    }
+  }
+
+  dragging = null;
+  drawAll();
+}
+
+// — Timer —
+function startTimer() {
+  timerInterval = setInterval(() => {
+    elapsedSeconds++;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(elapsedSeconds / 60);
+  const s = elapsedSeconds % 60;
+  document.getElementById('timer-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function updatePiecesDisplay() {
+  document.getElementById('pieces-display').textContent = `${placedCount} / ${totalPieces}`;
+}
+
+// — Win —
+function onWin() {
+  stopTimer();
+  const m = Math.floor(elapsedSeconds / 60);
+  const s = elapsedSeconds % 60;
+  document.getElementById('win-time-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
+  const ws = document.getElementById('win-screen');
+  ws.style.display = 'flex';
+}
+
+function playAgain() {
+  document.getElementById('win-screen').style.display = 'none';
+  stopTimer();
+  initPuzzle();
+}
+
+function goToSetup() {
+  document.getElementById('win-screen').style.display = 'none';
+  stopTimer();
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'block';
+}
+
+// ESC to close win screen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('win-screen').style.display = 'none';
+});
+</script>
+
+</body>
+</html>
